@@ -1,0 +1,57 @@
+var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+
+var getUrl = function() {
+    //var url = 'f?p=#APP_ID#:1:#SESSION#::NO:RP,1';
+    var url = 'f?p=450:2:#SESSION#:::';
+    
+    //url = url.replace('#APP_ID#', $v('pFlowId'));
+    url = url.replace('#SESSION#', $v('pInstance'));
+
+
+    return url;
+};
+
+function showAlert(Type,Msg){
+    var findSpan = $('#APEX_SUCCESS_MESSAGE').length;
+    if (findSpan == 1){
+        $('#APEX_SUCCESS_MESSAGE').remove();
+
+        // Re-Run
+        showAlert(Type,Msg);
+    } else{
+            // Adding HTML code!
+            $('#t_Body_content').prepend(
+                '<span id="APEX_SUCCESS_MESSAGE" class="apex-page-success"><div class="t-Body-alert">'
+                + '<div class="t-Alert t-Alert--defaultIcons t-Alert--success t-Alert--horizontal t-Alert--page t-Alert--colorBG" '
+                + 'id="t_Alert_Success" role="alert" style="display: none;"><div class="t-Alert-wrap"><div class="t-Alert-icon">'
+                + '<span style="color: white; font-size: 25px;" class="fa fa-check fa-xl fa-anim-flash"></span></div>'
+                + '<div class="t-Alert-content"><div class="t-Alert-header"><h2 class="t-Alert-title">'
+                + Msg
+                + '</h2></div></div><div class="t-Alert-buttons"><button class="t-Button t-Button--noUI t-Button--icon t-Button--closeAlert" '
+                + 'type="button" title="Close Notification"><span class="t-Icon icon-close"></span></button></div></div></div></div></span>');
+
+                $('#t_Alert_Success > div > div.t-Alert-buttons > button[title="Close Notification"]')
+                    .on('click',function(){
+                    $('#APEX_SUCCESS_MESSAGE').remove();
+                });
+
+            if(Type=='s'){
+                $.when(
+                    // Auto close success message
+                    $('#t_Alert_Success').show(),
+                    $('#t_Alert_Success').fadeIn(300).delay(3000).fadeOut(400)
+                ).then(
+                        function(){
+                            $('#APEX_SUCCESS_MESSAGE').remove();
+                        });
+
+            }else if(Type=='e'){
+                    // Set error style ...
+                    $('#t_Alert_Success').attr('style','background-color: #e95b54;');
+                    $('#t_Alert_Success div div.t-Alert-icon span').removeClass('fa-check');
+                    $('#t_Alert_Success div div.t-Alert-icon span').addClass('fa-close');
+                    $('#t_Alert_Success').show();
+                    $('#t_Alert_Success').fadeIn(200).delay(2000).fadeOut(300);
+            }       
+    }
+}
